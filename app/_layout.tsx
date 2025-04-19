@@ -1,10 +1,13 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
+import { Stack, Slot, useRouter } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import 'react-native-reanimated';
+import '../global.css';
+import { useAtom } from 'jotai';
+import { isAuthenticatedAtom } from '../contexts/authContext';
 
 import { useColorScheme } from '@/components/useColorScheme';
 
@@ -15,13 +18,16 @@ export {
 
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: '(tabs)',
+  initialRouteName: 'index',
 };
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  const router = useRouter();
+  const [isAuthenticated] = useAtom(isAuthenticatedAtom);
+  const [isReady, setIsReady] = useState(false);
   const [loaded, error] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
     ...FontAwesome.font,
@@ -35,8 +41,19 @@ export default function RootLayout() {
   useEffect(() => {
     if (loaded) {
       SplashScreen.hideAsync();
+      setIsReady(true);
     }
   }, [loaded]);
+
+  useEffect(() => {
+    if (isReady) {
+      if (isAuthenticated) {
+        router.replace('/protected/dashboard');
+      } else {
+        router.replace('/auth/login');
+      }
+    }
+  }, [isAuthenticated, isReady, router]);
 
   if (!loaded) {
     return null;
@@ -51,8 +68,7 @@ function RootLayoutNav() {
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="index" options={{ headerShown: false }} />
       </Stack>
     </ThemeProvider>
   );
