@@ -1,8 +1,6 @@
 import axios from 'axios';
 import { tokenAtom } from '~/contexts/authContext';
-import { getDefaultStore } from 'jotai';
-
-const store = getDefaultStore();
+import { store } from '~/contexts/store';
 
 const axiosClient = axios.create({
     baseURL: 'http://192.168.20.56:3001/api',

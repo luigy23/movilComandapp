@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable, Alert, ScrollView } from 'react-native';
-import { router } from 'expo-router';
+import { Link, router } from 'expo-router';
 import { useAtom } from 'jotai';
 import { userInfoAtom } from '~/contexts/authContext';
 import { useAuthService } from '~/contexts/authContext';
@@ -33,7 +33,11 @@ const Dashboard = () => {
                     ))}
                 </View>
             )}
-            
+            <Link href="../Mesas" asChild>    
+                <Pressable className="bg-blue-500 px-6 py-3 rounded-lg active:opacity-80">
+                    <Text className="text-white font-semibold">Mesas</Text>
+                </Pressable>
+            </Link>
             <Pressable 
                 onPress={handleLogout}
                 className="bg-red-500 px-6 py-3 rounded-lg active:opacity-80"

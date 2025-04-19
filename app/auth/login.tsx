@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import { View, Text, StyleSheet, TextInput, Pressable, Alert, ActivityIndicator } from 'react-native'
-import { router } from 'expo-router'
+import { Link, router } from 'expo-router'
 import { authService } from '@/services/authService'
 import { useAtom } from 'jotai'
-import { tokenAtom } from '@/contexts/authContext'
+import { isAuthenticatedAtom, tokenAtom } from '@/contexts/authContext'
 
 const Login = () => {
     const [email, setEmail] = useState('')
@@ -11,6 +11,8 @@ const Login = () => {
     const [rememberMe, setRememberMe] = useState(false)
     const [loading, setLoading] = useState(false)
     const [, setToken] = useAtom(tokenAtom)
+    const [isAuthenticated] = useAtom(isAuthenticatedAtom);
+
 
     const handleLogin = async () => {
         if (!email || !password) {
@@ -38,6 +40,8 @@ const Login = () => {
 
     return (
         <View style={styles.container} className="px-6">
+            {
+            !isAuthenticated ? (<>
             <Text className="text-3xl font-bold mb-12">
                 Iniciar <Text className="text-emerald-600">Sesión</Text>
             </Text>
@@ -92,7 +96,21 @@ const Login = () => {
                     )}
                 </Pressable>
             </View>
+            </>):
+            (<>
+            <Link href="/protected/dashboard">
+            <Text className="text-3xl font-bold mb-12">
+                Iniciar <Text className="text-emerald-600">Sesión</Text>
+            </Text>
+            </Link>
+            </>)
+            
+        }
+
+            
         </View>
+        
+        
     )
 }
 
