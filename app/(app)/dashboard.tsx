@@ -1,31 +1,27 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable, Alert, ScrollView } from 'react-native';
-import { Link, router } from 'expo-router';
-import { useAtom } from 'jotai';
-import { userInfoAtom } from '~/contexts/authContext';
-import { useAuthService } from '~/contexts/authContext';
+import { Link } from 'expo-router';
+import { useAuth } from '@/hooks/useAuth';
 
 const Dashboard = () => {
-    const [userInfo] = useAtom(userInfoAtom);
-    const { logout } = useAuthService();
+    const { logout, user } = useAuth();
 
     const handleLogout = async () => {
         try {
-            await logout();
-            router.replace('/auth/login');
+            logout();
         } catch (error) {
             Alert.alert('Error', 'No se pudo cerrar sesión');
         }
     };
 
-    return (
+    return (    
         <ScrollView style={styles.container} className="p-4">
             <Text className="text-2xl font-bold mb-8">Dashboard</Text>
-            <Text className="text-lg font-semibold mb-4">Bienvenido {userInfo?.name}</Text>
-            {userInfo && (
+            <Text className="text-lg font-semibold mb-4">Bienvenido {user?.name}</Text>
+            {user && (
                 <View className="mb-8 p-4 bg-gray-100 rounded-lg">
                     <Text className="text-lg font-semibold mb-4">Información del Usuario:</Text>
-                    {Object.entries(userInfo).map(([key, value]) => (
+                    {Object.entries(user).map(([key, value]) => (
                         <View key={key} className="mb-2">
                             <Text className="font-medium">{key}:</Text>
                             <Text className="text-gray-600">{JSON.stringify(value)}</Text>

@@ -23,8 +23,10 @@ export interface UserData {
 export const authService = {
     
   async login(credentials: Credentials) {
+    console.log("[authService] login:", credentials);
     try {
       const { data } = await axiosClient.post('/auth/login', credentials);
+      console.log("[authService] login:", data);
       return data;
     } catch (error: any) {
       console.error('Error en el servicio de login:', error);

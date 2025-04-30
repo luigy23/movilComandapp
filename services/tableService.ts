@@ -1,5 +1,17 @@
 import axiosClient from "@/lib/axios";
 import { AxiosError } from "axios";
+
+// Constantes de rutas
+const API_ROUTES = {
+  TABLES: {
+    BASE: '/tables',
+    CATEGORIES: '/tables-categories',
+    BY_ID: (id: number) => `/tables/${id}`,
+    CATEGORY_BY_ID: (id: number) => `/tables-categories${id}`,
+    BY_CATEGORY: (categoryId: number) => `/tables/category?categoryId=${categoryId}`
+  }
+} as const;
+
 // Enums
 export enum TableStatus {
     AVAILABLE = 'AVAILABLE',
@@ -35,6 +47,15 @@ export enum TableStatus {
   interface ApiError {
     message: string;
   }
+
+  // enum TableStatus {
+  //   AVAILABLE     // Disponible
+  //   OCCUPIED      // Ocupada
+  //   BILL_PENDING  // Ocupada, esperando pago
+  //   DISABLED      // Deshabilitada (fuera de servicio)
+  // }
+
+
   // Interfaces para Mesas
   export interface Table {
     id: number;
@@ -67,7 +88,7 @@ export const tableCategoriesService = {
     // Obtener todas las categorías
     async getCategories(): Promise<TableCategory[]> {
       try {
-        const { data } = await axiosClient.get('/table-categories');
+        const { data } = await axiosClient.get(API_ROUTES.TABLES.CATEGORIES);
         return data;
       } catch (error) {
         const axiosError = error as AxiosError<ApiError>;   
@@ -79,7 +100,7 @@ export const tableCategoriesService = {
     // Obtener categoría por ID
     async getCategoryById(id: number): Promise<TableCategory> {
       try {
-        const { data } = await axiosClient.get(`/table-categories/${id}`);
+        const { data } = await axiosClient.get(API_ROUTES.TABLES.CATEGORY_BY_ID(id));
         return data;
       } catch (error) {
         const axiosError = error as AxiosError<ApiError>;
@@ -91,7 +112,7 @@ export const tableCategoriesService = {
     // Crear nueva categoría
     async createCategory(categoryData: CreateTableCategoryData): Promise<TableCategory> {
       try {
-        const { data } = await axiosClient.post('/table-categories', categoryData);
+        const { data } = await axiosClient.post(API_ROUTES.TABLES.CATEGORIES, categoryData);
         return data;
       } catch (error) {
         const axiosError = error as AxiosError<ApiError>;
@@ -103,7 +124,7 @@ export const tableCategoriesService = {
     // Actualizar categoría
     async updateCategory(id: number, categoryData: UpdateTableCategoryData): Promise<TableCategory> {
       try {
-        const { data } = await axiosClient.put(`/table-categories/${id}`, categoryData);
+        const { data } = await axiosClient.put(API_ROUTES.TABLES.CATEGORY_BY_ID(id), categoryData);
         return data;
       } catch (error) {
         const axiosError = error as AxiosError<ApiError>;
@@ -115,7 +136,7 @@ export const tableCategoriesService = {
     // Eliminar categoría
     async deleteCategory(id: number): Promise<{ message: string }> {
       try {
-        const { data } = await axiosClient.delete(`/table-categories/${id}`);
+        const { data } = await axiosClient.delete(API_ROUTES.TABLES.CATEGORY_BY_ID(id));
         return data;
       } catch (error) {
         const axiosError = error as AxiosError<ApiError>;
@@ -128,14 +149,18 @@ export const tableCategoriesService = {
   // Servicio para Mesas
   export const tablesService = {
     // Obtener todas las mesas
-    async getTables(categoryId?: number): Promise<Table[]> {
+    async getTables(): Promise<Table[]> {
       try {
-        const url = categoryId ? `/tables?categoryId=${categoryId}` : '/tables';
+        const url = API_ROUTES.TABLES.BASE;
+        console.log('Realizando petición a:', url);
         const { data } = await axiosClient.get(url);
         return data;
       } catch (error) {
         const axiosError = error as AxiosError<ApiError>;
         console.error('Error al obtener mesas:', axiosError);
+        if (axiosError.response?.status === 401) {
+          console.error('Token no válido o expirado');
+        }
         throw new Error(axiosError.response?.data?.message || 'Error al obtener mesas');
       }
     },
@@ -143,7 +168,7 @@ export const tableCategoriesService = {
     // Obtener mesa por ID
     async getTableById(id: number): Promise<Table> {
       try {
-        const { data } = await axiosClient.get(`/tables/${id}`);
+        const { data } = await axiosClient.get(API_ROUTES.TABLES.BY_ID(id));
         return data;
       } catch (error) {
         const axiosError = error as AxiosError<ApiError>;
@@ -155,7 +180,7 @@ export const tableCategoriesService = {
     // Crear nueva mesa
     async createTable(tableData: CreateTableData): Promise<Table> {
       try {
-        const { data } = await axiosClient.post('/tables', tableData);
+        const { data } = await axiosClient.post(API_ROUTES.TABLES.BASE, tableData);
         return data;
       } catch (error) {
         const axiosError = error as AxiosError<ApiError>;
@@ -167,7 +192,7 @@ export const tableCategoriesService = {
     // Actualizar mesa
     async updateTable(id: number, tableData: UpdateTableData): Promise<Table> {
       try {
-        const { data } = await axiosClient.put(`/tables/${id}`, tableData);
+        const { data } = await axiosClient.put(API_ROUTES.TABLES.BY_ID(id), tableData);
         return data;
       } catch (error) {
         const axiosError = error as AxiosError<ApiError>;
@@ -179,12 +204,23 @@ export const tableCategoriesService = {
     // Eliminar mesa
     async deleteTable(id: number): Promise<{ message: string }> {
       try {
-        const { data } = await axiosClient.delete(`/tables/${id}`);
+        const { data } = await axiosClient.delete(API_ROUTES.TABLES.BY_ID(id));
         return data;
       } catch (error) {
         const axiosError = error as AxiosError<ApiError>;
         console.error('Error al eliminar mesa:', axiosError);
         throw new Error(axiosError.response?.data?.message || 'Error al eliminar mesa');
+      }
+    },
+
+    async getTablesByCategory(categoryId: number): Promise<Table[]> {
+      try {
+        const { data } = await axiosClient.get(API_ROUTES.TABLES.BY_CATEGORY(categoryId));
+        return data;
+      } catch (error) {
+        const axiosError = error as AxiosError<ApiError>;
+        console.error('Error al obtener mesas por categoría:', axiosError);
+        throw new Error(axiosError.response?.data?.message || 'Error al obtener mesas por categoría');
       }
     }
   }; 

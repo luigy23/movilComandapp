@@ -1,38 +1,37 @@
 import React, { useState } from 'react'
 import { View, Text, StyleSheet, TextInput, Pressable, Alert, ActivityIndicator } from 'react-native'
+import { useAuth } from '@/hooks/useAuth'
 import { Link, router } from 'expo-router'
-import { authService } from '@/services/authService'
+import { authActionsAtom } from '@/store/auth'
 import { useAtom } from 'jotai'
-import { isAuthenticatedAtom, tokenAtom } from '@/contexts/authContext'
 
 const Login = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [rememberMe, setRememberMe] = useState(false)
     const [loading, setLoading] = useState(false)
-    const [, setToken] = useAtom(tokenAtom)
-    const [isAuthenticated] = useAtom(isAuthenticatedAtom);
 
+    const [, authActions] = useAtom(authActionsAtom);
 
     const handleLogin = async () => {
+        setLoading(true)    
+        //verificar si los campos estan llenos
         if (!email || !password) {
             Alert.alert('Error', 'Por favor ingresa todos los campos')
             return
         }
 
         try {
-            setLoading(true)
-            const response = await authService.login({ email, password })
-            if (response.token) {
-                setToken(response.token)
+            const success = await authActions({ type: 'LOGIN', payload: { email, password } })
+            if (success) {
+                router.replace('/dashboard')
             }
-            console.log('Login exitoso:', response)
-            router.replace('/protected/dashboard')
+            else {
+                Alert.alert('Error', 'Ocurrió un error al iniciar sesión')
+            }
+        
         } catch (error: any) {
-            Alert.alert(
-                'Error',
-                error.message || 'Ocurrió un error al iniciar sesión'
-            )
+            Alert.alert('Error', error.message || 'Ocurrió un error al iniciar sesión')
         } finally {
             setLoading(false)
         }
@@ -40,8 +39,8 @@ const Login = () => {
 
     return (
         <View style={styles.container} className="px-6">
-            {
-            !isAuthenticated ? (<>
+          
+
             <Text className="text-3xl font-bold mb-12">
                 Iniciar <Text className="text-emerald-600">Sesión</Text>
             </Text>
@@ -96,21 +95,8 @@ const Login = () => {
                     )}
                 </Pressable>
             </View>
-            </>):
-            (<>
-            <Link href="/protected/dashboard">
-            <Text className="text-3xl font-bold mb-12">
-                Iniciar <Text className="text-emerald-600">Sesión</Text>
-            </Text>
-            </Link>
-            </>)
-            
-        }
-
-            
+    
         </View>
-        
-        
     )
 }
 

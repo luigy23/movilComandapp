@@ -1,6 +1,6 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { tokenAtom } from '~/contexts/authContext';
-import { store } from '~/contexts/store';
+//     baseURL: 'http://192.168.20.56:3001/api',
 
 const axiosClient = axios.create({
     baseURL: 'http://192.168.20.56:3001/api',
@@ -8,12 +8,13 @@ const axiosClient = axios.create({
         'Content-Type': 'application/json',
     },
     timeout: 5000,
+    withCredentials: true,
 });
 
 axiosClient.interceptors.request.use(
     async (config) => {
         try {
-            const token = store.get(tokenAtom);
+            const token = await AsyncStorage.getItem('token');
             if (token) {
                 const cleanToken = token.replace(/^"|"$/g, '');
                 config.headers = config.headers || {};
@@ -41,7 +42,7 @@ axiosClient.interceptors.response.use(
 
         if (error.response.status === 401) {
             try {
-                store.set(tokenAtom, null);
+                AsyncStorage.removeItem('token');
             } catch (e) {
                 console.error('Error al eliminar el token:', e);
             }
