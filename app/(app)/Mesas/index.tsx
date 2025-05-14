@@ -1,8 +1,10 @@
 import ItemMesa from '@/components/Mesas/ItemMesa';
 import { useState, useEffect } from 'react';
-import { View, Text, ScrollView, TextInput, Pressable } from 'react-native';
+import { View, Text, ScrollView, TextInput, Pressable, FlatList, useWindowDimensions } from 'react-native';
 import { tablesService, Table, TableCategory, tableCategoriesService } from '@/services/tableService';
 import { Ionicons } from '@expo/vector-icons';
+import { pedidoAtom } from '@/store/pedido';
+import { useAtom } from 'jotai';
 
 // Función para normalizar texto (eliminar tildes)
 const normalizarTexto = (texto: string): string => {
@@ -10,10 +12,15 @@ const normalizarTexto = (texto: string): string => {
 };
 
 export default function Mesas() {
+    const [pedido, setPedido] = useAtom(pedidoAtom);
+
     const [mesas, setMesas] = useState<Table[]>([]);
     const [categorias, setCategorias] = useState<TableCategory[]>([]);
     const [busqueda, setBusqueda] = useState('');
     const [categoriaSeleccionada, setCategoriaSeleccionada] = useState<string>('Todas');
+
+    const { width } = useWindowDimensions();
+    const numColumns = width > 900 ? 4 : width > 600 ? 3 : 2;
 
     useEffect(() => {
         tablesService.getTables().then((mesas) => {
@@ -22,7 +29,8 @@ export default function Mesas() {
         tableCategoriesService.getCategories().then((categorias) => {
             setCategorias(categorias);
         });
-    }, []);
+
+    }, [pedido]);
 
     // Función para filtrar las mesas
     const mesasFiltradas = mesas.filter((mesa) => {
@@ -40,12 +48,17 @@ export default function Mesas() {
 
     return (
         <View className="flex-1 bg-gray-100">
+
             {/* Header con botón de regreso y título */}
             <View className="flex-row items-center p-4 bg-white border-b border-gray-200">
                 <Pressable className="mr-4">
                     <Ionicons name="arrow-back" size={24} color="#000" />
                 </Pressable>
                 <Text className="text-lg font-semibold">Usuario</Text>
+            </View>
+
+            <View className="p-4">
+                <Text>{JSON.stringify(pedido)}</Text>
             </View>
 
             {/* Contenido principal */}
@@ -95,19 +108,23 @@ export default function Mesas() {
                 </ScrollView>
 
                 {/* Grid de mesas */}
-                <View className="flex-row flex-wrap gap-1">
-                    {mesasFiltradas.map((mesa) => (
-                        <ItemMesa 
-                            key={mesa.id} 
-                            id={mesa.id} 
-                            nombre={mesa.number} 
-                            descripcion={mesa.description} 
-                            capacidad={mesa.capacity} 
-                            categoria={mesa.category?.name} 
-                            estado={mesa.status} 
+                <FlatList
+                    data={mesasFiltradas}
+                    keyExtractor={(item) => item.id.toString()}
+                    numColumns={numColumns}
+                    columnWrapperStyle={{ gap: 8 }}
+                    contentContainerStyle={{ gap: 8 }}
+                    renderItem={({ item }) => (
+                        <ItemMesa
+                            id={item.id}
+                            nombre={item.number}
+                            descripcion={item.description}
+                            capacidad={item.capacity}
+                            categoria={item.category?.name}
+                            estado={item.status}
                         />
-                    ))}
-                </View>
+                    )}
+                />
             </View>
         </View>
     );

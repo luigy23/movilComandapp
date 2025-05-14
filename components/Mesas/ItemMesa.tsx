@@ -1,4 +1,9 @@
-import { View, Text, Pressable, Alert } from 'react-native';
+import { View, Text, Pressable, Alert, Platform } from 'react-native';
+import { useAtom } from 'jotai';
+import { pedidoAtom, inicializarPedido, actualizarMesa } from '@/store/pedido';
+import { userAtom } from '@/store/auth';
+import { orderService } from '@/services/orderService';
+import {  useRouter } from 'expo-router';
 
 interface ItemMesaProps {
     id: number;
@@ -19,15 +24,34 @@ interface ItemMesaProps {
   // }
 
 export default function ItemMesa({ id, nombre, descripcion, capacidad, categoria, estado }: ItemMesaProps) {
-    const handlePress = () => {
-        Alert.alert(
-            "los datos de la mesa",
-            `La mesa es: ${nombre}
-            la descripcion es: ${descripcion}
-            la capacidad es: ${capacidad}
-            la categoria es: ${categoria}
-            el estado es: ${estado}`
-        );
+    const [pedido, setPedido] = useAtom(pedidoAtom);
+    const [user] = useAtom(userAtom);
+    const router = useRouter();
+
+
+    const handlePress = async () => {
+
+            const pedido = {
+                tableId: id,
+                waiterId: user?.id || 0,
+                items: [],
+                status: 'OPEN',
+                total: 0
+            }
+
+            const currentOrder = await orderService.getCurrentOrder(id);
+            if (currentOrder) {     
+                setPedido(currentOrder);
+            } else {
+                const response = await orderService.createOrder(pedido);
+                console.log(response);
+                setPedido(response);
+            }
+            
+           
+    
+        router.navigate('../Products')
+        
     };
 
     const obtenerEstado = () => {

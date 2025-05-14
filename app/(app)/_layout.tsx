@@ -1,9 +1,9 @@
 import { Stack, Slot } from 'expo-router';
 import { useAtom } from 'jotai';
-import { isAuthenticatedAtom } from '../../contexts/authContext'; // Ajusta la ruta si es necesario
 import { useEffect, useState } from 'react';
 import { router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { isAuthenticatedAtom } from '@/store/auth';
 
 export default function ProtectedLayout() {
   const [isAuthenticated] = useAtom(isAuthenticatedAtom);
@@ -13,8 +13,7 @@ export default function ProtectedLayout() {
     const checkAuth = async () => {
       try {
         const token = await AsyncStorage.getItem('token');
-        console.log("[Protected Layout] Auth State:", isAuthenticated);
-        console.log("[Protected Layout] token:", token);
+
         
         if (!isAuthenticated && !token) {
           router.replace('/login');
