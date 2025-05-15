@@ -6,7 +6,9 @@ import { productCategoriesService, Category, Product, productsService } from '@/
 import { Ionicons } from '@expo/vector-icons'
 import { Image } from 'expo-image'
 import ItemProducto from '@/components/Productos/ItemProducto'
-
+import Animated, { useSharedValue, useAnimatedStyle, withTiming, Easing, runOnJS } from 'react-native-reanimated'
+import ModalAgregarProducto from '@/components/Productos/ModalAgregarProducto'
+import { Link } from 'expo-router'
 
 
 
@@ -25,6 +27,10 @@ const Index = () => {
   const [cantidad, setCantidad] = useState('1');
   const [notas, setNotas] = useState('');
 
+  // Animaciones con Reanimated
+  const overlayOpacity = useSharedValue(0);
+  const modalTranslateY = useSharedValue(100);
+
   useEffect(() => {
     productCategoriesService.getCategories().then(setCategories);
     productsService.getProducts().then((products) => {
@@ -32,12 +38,33 @@ const Index = () => {
     });
   }, []);
 
+  useEffect(() => {
+    if (modalVisible) {
+      overlayOpacity.value = withTiming(1, { duration: 200 });
+      modalTranslateY.value = withTiming(0, { duration: 300, easing: Easing.out(Easing.exp) });
+    }
+  }, [modalVisible]);
+
+  const overlayStyle = useAnimatedStyle(() => ({
+    opacity: overlayOpacity.value,
+  }));
+
+  const modalStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: modalTranslateY.value }],
+    opacity: overlayOpacity.value,
+  }));
+
+  // Función para cerrar el modal con animación (ahora solo setModalVisible)
+  const cerrarModal = () => setModalVisible(false);
+
   // Función para abrir el modal global
   const abrirModalProducto = (producto: Product) => {
     setProductoSeleccionado(producto);
     setCantidad('1');
     setNotas('');
     setModalVisible(true);
+    overlayOpacity.value = 0;
+    modalTranslateY.value = 100;
   };
 
   // Función para añadir al pedido
@@ -48,6 +75,7 @@ const Index = () => {
       unitPrice: productoSeleccionado.price,
       notes: notas,
       productId: productoSeleccionado.id,
+      name: productoSeleccionado.name,
     };
     const nuevoPedido = añadirItem(pedido, item);
     setPedido(nuevoPedido);
@@ -81,6 +109,9 @@ const Index = () => {
 
       <View className="p-4 mb-7 bg-white rounded-lg shadow-sm">
         <Text>{JSON.stringify(pedido)}</Text>
+        <Link href="../Canasta">
+          <Text>Ir a la canasta</Text>
+        </Link>
 
         {/* Barra de búsqueda */}
         <View className="bg-white rounded-lg shadow-sm mb-4">
@@ -144,53 +175,16 @@ const Index = () => {
         />
       </View>
 
-      {/* Modal global para añadir producto al pedido */}
-      <Modal
-        animationType="slide"
+      <ModalAgregarProducto
         visible={modalVisible}
-        transparent
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View className="flex-1 justify-center items-center bg-black/40">
-          <View className="bg-white rounded-2xl p-6 w-11/12 max-w-md shadow-lg">
-            {productoSeleccionado && (
-              <>
-                <Text className="text-xl font-bold mb-2 text-gray-800">{productoSeleccionado.name}</Text>
-                <Text className="text-lg text-gray-600 mb-1">ID: {productoSeleccionado.id}</Text>
-                <Text className="text-lg font-semibold text-blue-600 mb-4">${productoSeleccionado.price}</Text>
-                <Text className="text-sm text-gray-500 mb-1">Cantidad</Text>
-                <TextInput
-                  className="border border-gray-300 rounded-lg px-3 py-2 mb-3 text-base"
-                  keyboardType="numeric"
-                  value={cantidad}
-                  onChangeText={setCantidad}
-                  placeholder="Cantidad"
-                />
-                <Text className="text-sm text-gray-500 mb-1">Notas</Text>
-                <TextInput
-                  className="border border-gray-300 rounded-lg px-3 py-2 mb-4 text-base min-h-[60px]"
-                  value={notas}
-                  onChangeText={setNotas}
-                  placeholder="Notas para la cocina (opcional)"
-                  multiline
-                />
-                <Pressable
-                  className="bg-green-500 rounded-lg py-3 items-center mb-2"
-                  onPress={handleAgregarAlPedido}
-                >
-                  <Text className="text-white font-bold text-base">Añadir al pedido</Text>
-                </Pressable>
-                <Pressable
-                  className="py-2 items-center"
-                  onPress={() => setModalVisible(false)}
-                >
-                  <Text className="text-gray-500">Cancelar</Text>
-                </Pressable>
-              </>
-            )}
-          </View>
-        </View>
-      </Modal>
+        productoSeleccionado={productoSeleccionado}
+        cantidad={cantidad}
+        notas={notas}
+        setCantidad={setCantidad}
+        setNotas={setNotas}
+        onAgregar={handleAgregarAlPedido}
+        onClose={cerrarModal}
+      />
     </View>
   )
 }

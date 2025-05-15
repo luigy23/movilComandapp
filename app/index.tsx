@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { useAtom } from 'jotai';
-import { isAuthenticatedAtom } from '../store/auth';
+import { isAuthenticatedAtom } from '@/store/auth';
 import { useRouter } from 'expo-router';
 
 export default function Index() {
@@ -9,6 +9,7 @@ export default function Index() {
   const router = useRouter();
 
   const handlePress = () => {
+    console.log('isAuthenticated', isAuthenticated);
     if (isAuthenticated) {
       router.push('/dashboard');
     } else {
@@ -18,7 +19,7 @@ export default function Index() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>¡Bienvenido a Comandapp!</Text>
+      <Text style={styles.title}>¡Bienvenido a Comandappaa!</Text>
       <Pressable style={styles.button} onPress={handlePress}>
         <Text style={styles.buttonText}>Ir a la aplicación</Text>
       </Pressable>

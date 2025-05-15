@@ -24,7 +24,7 @@ const ItemProducto = ({ product, index, onAdd }: ItemProductoProps) => {
     return (
 
         <>
-        <View className={`flex-1 rounded-2xl p-4 mb-2 relative overflow-hidden ${bgColors[index % bgColors.length]}`} style={{ minHeight: 160 }}>
+        <Pressable onPress={onAdd} className={`flex-1 rounded-2xl p-4 mb-2 relative overflow-hidden ${bgColors[index % bgColors.length]}`} style={{ minHeight: 160 }}>
             <Image
                 source={product.imageUrl}
                 className="w-16 h-16 rounded-xl self-center mb-2"
@@ -32,11 +32,10 @@ const ItemProducto = ({ product, index, onAdd }: ItemProductoProps) => {
             />
             <Text className="text-base font-bold text-gray-800 mb-1">{product.name}</Text>
             <Text className="text-lg font-semibold text-gray-700 mb-2">${product.price}</Text>
-            <Pressable className="absolute bottom-4 right-4 bg-green-400 rounded-full w-8 h-8 items-center justify-center shadow-md" onPress={onAdd}>
+            <View className="absolute bottom-4 right-4 bg-green-400 rounded-full w-8 h-8 items-center justify-center shadow-md">
                 <Ionicons name="add" size={20} color="#fff" />
-            </Pressable>
-
-        </View>
+            </View>
+        </Pressable>
         
         </>
     )

@@ -43,6 +43,7 @@ export interface ItemPedido {
     unitPrice: number;
     notes: string;
     productId: number;
+    name: string;
 }
 
 
