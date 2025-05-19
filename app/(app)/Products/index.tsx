@@ -1,16 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { View, Text, ScrollView, Pressable, TextInput, FlatList, useWindowDimensions, Modal } from 'react-native'
+import { View, ScrollView, Pressable, TextInput, FlatList, useWindowDimensions, Modal } from 'react-native'
 import { useAtom } from 'jotai'
 import { pedidoAtom, añadirItem, canastaAtom, añadirItemCanasta } from '@/store/pedido'
 import { productCategoriesService, Category, Product, productsService } from '@/services/productsService'
 import { Ionicons } from '@expo/vector-icons'
 import { Image } from 'expo-image'
 import ItemProducto from '@/components/Productos/ItemProducto'
-
 import ModalAgregarProducto from '@/components/Productos/ModalAgregarProducto'
 import { Link } from 'expo-router'
-
-
+import Txt from '@/components/Txt'
 
 const Index = () => {
   const [canasta, setCanasta] = useAtom(canastaAtom)
@@ -27,17 +25,12 @@ const Index = () => {
   const [cantidad, setCantidad] = useState('1');
   const [notas, setNotas] = useState('');
 
-
-
   useEffect(() => {
     productCategoriesService.getCategories().then(setCategories);
     productsService.getProducts().then((products) => {
       setProducts(products as Product[]);
     });
   }, []);
-
-
-
 
   // Función para cerrar el modal con animación (ahora solo setModalVisible)
   const cerrarModal = () => setModalVisible(false);
@@ -60,7 +53,6 @@ const Index = () => {
       productId: productoSeleccionado.id,
       name: productoSeleccionado.name,
     };
-
 
     const nuevaCanasta = añadirItemCanasta(canasta, item);
     
@@ -91,12 +83,10 @@ const Index = () => {
 
   return (
     <View className="flex-1 bg-gray-100">
-
-
       <View className="p-4 mb-7 bg-white rounded-lg shadow-sm">
-        <Text>{JSON.stringify(canasta)}</Text>
+        <Txt>{JSON.stringify(canasta)}</Txt>
         <Link href="../Canasta">
-          <Text>Ir a la canasta</Text>
+          <Txt>Ir a la canasta</Txt>
         </Link>
 
         {/* Barra de búsqueda */}
@@ -126,7 +116,7 @@ const Index = () => {
                 : 'bg-blue-100 text-blue-800'
             }`}
           >
-            <Text>Todas</Text>
+            <Txt>Todas</Txt>
           </Pressable>
           {categories.map((category) => (
             <Pressable 
@@ -138,7 +128,7 @@ const Index = () => {
                   : 'bg-blue-100 text-blue-800'
               }`}
             >
-              <Text>{category.name}</Text>
+              <Txt>{category.name}</Txt>
             </Pressable>
           ))}
         </ScrollView>

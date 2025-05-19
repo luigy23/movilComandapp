@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Pressable, ScrollView } from 'react-native';
+import { View, Pressable, ScrollView } from 'react-native';
 import { useAtom } from 'jotai';
 import { canastaAtom, limpiarCanasta } from '@/store/pedido';
 import { Ionicons } from '@expo/vector-icons';
@@ -7,6 +7,7 @@ import EditarItemModal from './EditarItemModal';
 import { Link, useRouter } from 'expo-router';
 import { userAtom } from '@/store/auth';
 import { orderService } from '@/services/orderService';
+import Txt from '@/components/Txt';
 
 const Canasta = () => {
   const [canasta, setCanasta] = useAtom(canastaAtom);
@@ -64,12 +65,12 @@ const Canasta = () => {
           className="bg-green-200 px-4 py-2 rounded-lg"
           onPress={() => router.navigate('../Mesas')}
         >
-          <Text className="text-green-900 font-semibold">Mesa: {canasta?.tableId ?? '-'}</Text>
+          <Txt className="text-green-900 font-semibold">Mesa: {canasta?.tableId ?? '-'}</Txt>
         </Pressable>
         <View className="bg-blue-200 px-4 py-2 rounded-lg">
-          <Text className="text-blue-900 font-semibold">
+          <Txt className="text-blue-900 font-semibold">
             Mesero: {user?.name ?? canasta?.waiterId ?? '-'}
-          </Text>
+          </Txt>
         </View>
       </View>
       {/* Lista de productos o mensaje vacío */}
@@ -78,13 +79,13 @@ const Canasta = () => {
           <ScrollView>
             {canasta.items.map((item, idx) => (
               <View key={idx} className="bg-white rounded-2xl p-4 mb-4 flex-row items-center">
-                <Text className="text-2xl font-bold mr-2">x{item.quantity}</Text>
+                <Txt className="text-2xl font-bold mr-2">x{item.quantity}</Txt>
                 <View className="flex-1">
-                  <Text className="text-lg font-semibold">{item.name}</Text>
+                  <Txt className="text-lg font-semibold">{item.name}</Txt>
                   <View className="flex-row items-center mt-1">
-                    <Text className="bg-gray-200 text-gray-500 rounded-xl px-3 py-1 text-base mr-2">
+                    <Txt className="bg-gray-200 text-gray-500 rounded-xl px-3 py-1 text-base mr-2">
                       Nota: {item.notes ? item.notes : 'Añadir nota'}
-                    </Text>
+                    </Txt>
                     <Pressable onPress={() => editarProducto(idx)}>
                       <Ionicons name="pencil-outline" size={20} color="#222" />
                     </Pressable>
@@ -100,14 +101,14 @@ const Canasta = () => {
             ))}
           </ScrollView>
           <Pressable className="bg-green-700 rounded-xl py-3 mt-4 items-center" onPress={enviarPedido}>
-            <Text className="text-white text-lg font-semibold">Enviar Pedido</Text>
+            <Txt className="text-white text-lg font-semibold">Enviar Pedido</Txt>
           </Pressable>
         </>
       ) : (
         <View className="flex-1 justify-center items-center">
-          <Text className="text-gray-500 text-lg font-semibold">No hay productos en el pedido</Text>
+          <Txt className="text-gray-500 text-lg font-semibold">No hay productos en el pedido</Txt>
           <Link href="/Products" asChild>
-            <Text className="text-blue-500 text-lg font-semibold">Agregar productos</Text>
+            <Txt className="text-blue-500 text-lg font-semibold">Agregar productos</Txt>
           </Link>
         </View>
       )}

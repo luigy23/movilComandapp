@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Pressable, StyleSheet } from 'react-native';
 import { useAtom } from 'jotai';
 import { isAuthenticatedAtom } from '@/store/auth';
 import { useRouter } from 'expo-router';
+import Txt from '@/components/Txt';
 
 export default function Index() {
   const [isAuthenticated] = useAtom(isAuthenticatedAtom);
@@ -19,9 +20,9 @@ export default function Index() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>¡Bienvenido a Comandappaa!</Text>
+      <Txt style={styles.title}>¡Bienvenido a Comandappaa!</Txt>
       <Pressable style={styles.button} onPress={handlePress}>
-        <Text style={styles.buttonText}>Ir a la aplicación</Text>
+        <Txt style={styles.buttonText}>Ir a la aplicación</Txt>
       </Pressable>
     </View>
   );

@@ -5,6 +5,7 @@ import { tablesService, Table, TableCategory, tableCategoriesService } from '@/s
 import { Ionicons } from '@expo/vector-icons';
 import { pedidoAtom } from '@/store/pedido';
 import { useAtom } from 'jotai';
+import Txt from '@/components/Txt';
 
 // Función para normalizar texto (eliminar tildes)
 const normalizarTexto = (texto: string): string => {
@@ -81,7 +82,7 @@ export default function Mesas() {
                             : 'bg-blue-100 text-blue-800'
                         }`}
                     >
-                        <Text>Todas</Text>
+                        <Txt>Todas</Txt>
                     </Pressable>
                     {categorias.map((categoria) => (
                         <Pressable 
@@ -93,7 +94,7 @@ export default function Mesas() {
                                 : 'bg-blue-100 text-blue-800'
                             }`}
                         >
-                            <Text>{categoria.name}</Text>
+                            <Txt>{categoria.name}</Txt>
                         </Pressable>
                     ))}
                 </ScrollView>

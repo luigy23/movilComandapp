@@ -1,8 +1,9 @@
 import { Ionicons } from '@expo/vector-icons'
 import React, { useState } from 'react'
-import { View, Text, Pressable, Modal } from 'react-native'
+import { View, Pressable, Modal } from 'react-native'
 import { Image } from 'expo-image'
 import { Product } from '@/services/productsService'
+import Txt from '@/components/Txt'
 
 interface ItemProductoProps {
     product: Product
@@ -30,8 +31,8 @@ const ItemProducto = ({ product, index, onAdd }: ItemProductoProps) => {
                 className="w-16 h-16 rounded-xl self-center mb-2"
                 style={{ resizeMode: 'contain' }}
             />
-            <Text className="text-base font-bold text-gray-800 mb-1">{product.name}</Text>
-            <Text className="text-lg font-semibold text-gray-700 mb-2">${product.price}</Text>
+            <Txt className="text-base font-bold text-gray-800 mb-1">{product.name}</Txt>
+            <Txt className="text-lg font-semibold text-gray-700 mb-2">${product.price}</Txt>
             <View className="absolute bottom-4 right-4 bg-green-400 rounded-full w-8 h-8 items-center justify-center shadow-md">
                 <Ionicons name="add" size={20} color="#fff" />
             </View>

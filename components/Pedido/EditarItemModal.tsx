@@ -1,5 +1,6 @@
 import React from 'react';
 import { Modal, View, Text, TextInput, Pressable, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import Txt from '@/components/Txt';
 
 interface EditarItemModalProps {
   visible: boolean;
@@ -54,8 +55,8 @@ const EditarItemModal: React.FC<EditarItemModalProps> = ({
             shadowRadius: 20,
             shadowOffset: { width: 0, height: 4 }
           }}>
-            <Text className="text-xl font-bold mb-4 text-gray-800">Editar producto</Text>
-            <Text className="text-base text-gray-600 mb-1">Cantidad</Text>
+            <Txt className="text-xl font-bold mb-4 text-gray-800">Editar producto</Txt>
+            <Txt className="text-base text-gray-600 mb-1">Cantidad</Txt>
             <TextInput
               className="border border-gray-300 rounded-lg px-3 py-2 mb-3 text-base"
               keyboardType="numeric"
@@ -64,7 +65,7 @@ const EditarItemModal: React.FC<EditarItemModalProps> = ({
               placeholder="Cantidad"
               autoFocus
             />
-            <Text className="text-base text-gray-600 mb-1">Notas</Text>
+            <Txt className="text-base text-gray-600 mb-1">Notas</Txt>
             <TextInput
               className="border border-gray-300 rounded-lg px-3 py-2 mb-4 text-base min-h-[48px]"
               value={notas}
@@ -77,13 +78,13 @@ const EditarItemModal: React.FC<EditarItemModalProps> = ({
                 className="px-4 py-2 rounded-lg bg-gray-200"
                 onPress={onClose}
               >
-                <Text className="text-gray-700">Cancelar</Text>
+                <Txt className="text-gray-700">Cancelar</Txt>
               </Pressable>
               <Pressable
                 className="px-4 py-2 rounded-lg bg-green-600"
                 onPress={onGuardar}
               >
-                <Text className="text-white font-semibold">Guardar</Text>
+                <Txt className="text-white font-semibold">Guardar</Txt>
               </Pressable>
             </View>
           </View>

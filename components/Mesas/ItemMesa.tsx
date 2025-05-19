@@ -1,9 +1,10 @@
-import { View, Text, Pressable, Alert, Platform } from 'react-native';
+import { View, Pressable, Alert, Platform } from 'react-native';
 import { useAtom } from 'jotai';
 import { pedidoAtom, inicializarPedido, actualizarMesa, canastaAtom } from '@/store/pedido';
 import { userAtom } from '@/store/auth';
 import { orderService } from '@/services/orderService';
 import {  useRouter } from 'expo-router';
+import Txt from '@/components/Txt';
 
 interface ItemMesaProps {
     id: number;
@@ -99,26 +100,26 @@ export default function ItemMesa({ id, nombre, descripcion, capacidad, categoria
         >
             <View className="p-4">
                 <View className="flex-row justify-between items-start mb-2">
-                    <Text className="text-xl font-semibold">Mesa {nombre}</Text>
+                    <Txt className="text-xl font-semibold">Mesa {nombre}</Txt>
                     {estado && (
-                        <Text className={`ml-4 px-2 py-1 rounded-full text-sm ${obtenerEstado()}`}>
+                        <Txt className={`ml-4 px-2 py-1 rounded-full text-sm ${obtenerEstado()}`}>
                             {obtenerNombreEstado()}
-                        </Text>
+                        </Txt>
                     )}
                 </View>
-                <Text className="text-gray-600 mb-2">{descripcion}</Text>
+                <Txt className="text-gray-600 mb-2">{descripcion}</Txt>
                 {capacidad && (
                     <View className="mb-2">
-                        <Text className="text-sm text-gray-500">
+                        <Txt className="text-sm text-gray-500">
                             Capacidad: {capacidad} personas
-                        </Text>
+                        </Txt>
                     </View>
                 )}
                 {categoria && (
                     <View className="mb-2">
-                        <Text className="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                        <Txt className="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">
                             {categoria}
-                        </Text>
+                        </Txt>
                     </View>
                 )}
             </View>

@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
-import { View, Text, StyleSheet, TextInput, Pressable, Alert, ActivityIndicator } from 'react-native'
+import { View, StyleSheet, TextInput, Pressable, Alert, ActivityIndicator } from 'react-native'
 import { useAuth } from '@/hooks/useAuth'
 import { Link, router } from 'expo-router'
 import { authActionsAtom } from '@/store/auth'
 import { useAtom } from 'jotai'
+import Txt from '@/components/Txt'
 
 const Login = () => {
     const [email, setEmail] = useState('')
@@ -41,9 +42,9 @@ const Login = () => {
         <View style={styles.container} className="px-6">
           
 
-            <Text className="text-3xl font-bold mb-12">
-                Iniciar <Text className="text-emerald-600">Sesión</Text>
-            </Text>
+            <Txt className="text-3xl font-bold mb-12">
+                Iniciar <Txt className="text-emerald-600">Sesión</Txt>
+            </Txt>
 
             <View className="w-full gap-4">
                 {/* Input de Usuario/Correo */}
@@ -77,7 +78,7 @@ const Login = () => {
                         onPress={() => setRememberMe(!rememberMe)}
                         className={`w-5 h-5 border border-gray-300 rounded mr-2 ${rememberMe ? 'bg-emerald-600' : 'bg-white'}`}
                     />
-                    <Text className="text-gray-600">Recordar</Text>
+                    <Txt className="text-gray-600">Recordar</Txt>
                 </View>
 
                 {/* Botón de Ingresar */}
@@ -89,9 +90,9 @@ const Login = () => {
                     {loading ? (
                         <ActivityIndicator color="white" />
                     ) : (
-                        <Text className="text-white text-center text-lg font-semibold">
+                        <Txt className="text-white text-center text-lg font-semibold">
                             Ingresar
-                        </Text>
+                        </Txt>
                     )}
                 </Pressable>
             </View>

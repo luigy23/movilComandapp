@@ -1,5 +1,6 @@
 import React from 'react';
 import { Text, TextInput, Pressable, Modal, View } from 'react-native';
+import Txt from '@/components/Txt';
 
 interface ModalAgregarProductoProps {
   visible: boolean;
@@ -37,10 +38,10 @@ const ModalAgregarProducto: React.FC<ModalAgregarProductoProps> = ({
         <View style={{ backgroundColor: 'white', borderRadius: 24, padding: 24, width: '90%', maxWidth: 400, shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 10 }}>
           {productoSeleccionado && (
             <>
-              <Text className="text-xl font-bold mb-2 text-gray-800">{productoSeleccionado.name}</Text>
-              <Text className="text-lg text-gray-600 mb-1">ID: {productoSeleccionado.id}</Text>
-              <Text className="text-lg font-semibold text-blue-600 mb-4">${productoSeleccionado.price}</Text>
-              <Text className="text-sm text-gray-500 mb-1">Cantidad</Text>
+              <Txt className="text-xl font-bold mb-2 text-gray-800">{productoSeleccionado.name}</Txt>
+              <Txt className="text-lg text-gray-600 mb-1">ID: {productoSeleccionado.id}</Txt>
+              <Txt className="text-lg font-semibold text-blue-600 mb-4">${productoSeleccionado.price}</Txt>
+              <Txt className="text-sm text-gray-500 mb-1">Cantidad</Txt>
               <TextInput
                 className="border border-gray-300 rounded-lg px-3 py-2 mb-3 text-base"
                 keyboardType="numeric"
@@ -48,7 +49,7 @@ const ModalAgregarProducto: React.FC<ModalAgregarProductoProps> = ({
                 onChangeText={setCantidad}
                 placeholder="Cantidad"
               />
-              <Text className="text-sm text-gray-500 mb-1">Notas</Text>
+              <Txt className="text-sm text-gray-500 mb-1">Notas</Txt>
               <TextInput
                 className="border border-gray-300 rounded-lg px-3 py-2 mb-4 text-base min-h-[60px]"
                 value={notas}
@@ -64,7 +65,7 @@ const ModalAgregarProducto: React.FC<ModalAgregarProductoProps> = ({
                   { opacity: pressed ? 0.7 : 1 },
                 ]}
               >
-                <Text className="text-white font-bold text-base">Añadir al pedido</Text>
+                <Txt className="text-white font-bold text-base">Añadir al pedido</Txt>
               </Pressable>
               <Pressable
                 className="py-2 items-center bg-red-200 rounded-lg"
@@ -74,7 +75,7 @@ const ModalAgregarProducto: React.FC<ModalAgregarProductoProps> = ({
                   { opacity: pressed ? 0.7 : 1 },
                 ]}
               >
-                <Text className="text-red-500">Cancelar</Text>
+                <Txt className="text-red-500">Cancelar</Txt>
               </Pressable>
             </>
           )}
