@@ -49,17 +49,8 @@ export default function Mesas() {
     return (
         <View className="flex-1 bg-gray-100">
 
-            {/* Header con botón de regreso y título */}
-            <View className="flex-row items-center p-4 bg-white border-b border-gray-200">
-                <Pressable className="mr-4">
-                    <Ionicons name="arrow-back" size={24} color="#000" />
-                </Pressable>
-                <Text className="text-lg font-semibold">Usuario</Text>
-            </View>
 
-            <View className="p-4">
-                <Text>{JSON.stringify(pedido)}</Text>
-            </View>
+
 
             {/* Contenido principal */}
             <View className="p-4">

@@ -27,7 +27,7 @@ const EditarItemModal: React.FC<EditarItemModalProps> = ({
       animationType="fade"
       onRequestClose={onClose}
     >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <TouchableWithoutFeedback >
         <View style={{
           flex: 1,
           backgroundColor: 'rgba(0,0,0,0.25)',

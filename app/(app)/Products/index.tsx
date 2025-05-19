@@ -1,19 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { View, Text, ScrollView, Pressable, TextInput, FlatList, useWindowDimensions, Modal } from 'react-native'
 import { useAtom } from 'jotai'
-import { pedidoAtom, añadirItem } from '@/store/pedido'
+import { pedidoAtom, añadirItem, canastaAtom, añadirItemCanasta } from '@/store/pedido'
 import { productCategoriesService, Category, Product, productsService } from '@/services/productsService'
 import { Ionicons } from '@expo/vector-icons'
 import { Image } from 'expo-image'
 import ItemProducto from '@/components/Productos/ItemProducto'
-import Animated, { useSharedValue, useAnimatedStyle, withTiming, Easing, runOnJS } from 'react-native-reanimated'
+
 import ModalAgregarProducto from '@/components/Productos/ModalAgregarProducto'
 import { Link } from 'expo-router'
 
 
 
 const Index = () => {
-  const [pedido, setPedido] = useAtom(pedidoAtom)
+  const [canasta, setCanasta] = useAtom(canastaAtom)
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [search, setSearch] = useState('');
@@ -27,9 +27,7 @@ const Index = () => {
   const [cantidad, setCantidad] = useState('1');
   const [notas, setNotas] = useState('');
 
-  // Animaciones con Reanimated
-  const overlayOpacity = useSharedValue(0);
-  const modalTranslateY = useSharedValue(100);
+
 
   useEffect(() => {
     productCategoriesService.getCategories().then(setCategories);
@@ -38,21 +36,8 @@ const Index = () => {
     });
   }, []);
 
-  useEffect(() => {
-    if (modalVisible) {
-      overlayOpacity.value = withTiming(1, { duration: 200 });
-      modalTranslateY.value = withTiming(0, { duration: 300, easing: Easing.out(Easing.exp) });
-    }
-  }, [modalVisible]);
 
-  const overlayStyle = useAnimatedStyle(() => ({
-    opacity: overlayOpacity.value,
-  }));
 
-  const modalStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: modalTranslateY.value }],
-    opacity: overlayOpacity.value,
-  }));
 
   // Función para cerrar el modal con animación (ahora solo setModalVisible)
   const cerrarModal = () => setModalVisible(false);
@@ -63,13 +48,11 @@ const Index = () => {
     setCantidad('1');
     setNotas('');
     setModalVisible(true);
-    overlayOpacity.value = 0;
-    modalTranslateY.value = 100;
   };
 
   // Función para añadir al pedido
   const handleAgregarAlPedido = () => {
-    if (!productoSeleccionado || !pedido) return;
+    if (!productoSeleccionado || !canasta) return;
     const item = {
       quantity: parseInt(cantidad) || 1,
       unitPrice: productoSeleccionado.price,
@@ -77,8 +60,11 @@ const Index = () => {
       productId: productoSeleccionado.id,
       name: productoSeleccionado.name,
     };
-    const nuevoPedido = añadirItem(pedido, item);
-    setPedido(nuevoPedido);
+
+
+    const nuevaCanasta = añadirItemCanasta(canasta, item);
+    
+    setCanasta(nuevaCanasta);
     setModalVisible(false);
   };
 
@@ -108,7 +94,7 @@ const Index = () => {
 
 
       <View className="p-4 mb-7 bg-white rounded-lg shadow-sm">
-        <Text>{JSON.stringify(pedido)}</Text>
+        <Text>{JSON.stringify(canasta)}</Text>
         <Link href="../Canasta">
           <Text>Ir a la canasta</Text>
         </Link>

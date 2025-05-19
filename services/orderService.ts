@@ -24,12 +24,13 @@ const API_ROUTES = {
     ORDER_TABLE: '/orders/table',
     ORDER_WAITER: '/orders/waiter',
     ORDER_CURRENT: '/orders/current',
-    ORDER_ID: '/orders/:id',
+    ORDER_ID: '/orders',
     ORDER_ITEM_ID: '/orders/:orderId/items/:itemId',
 }
 
 
 export interface Pedido {
+    id?: number;
     tableId: number;
     waiterId: number; //user id
     status: string;
@@ -55,7 +56,12 @@ export const orderService = {
     getCurrentOrder: async (tableId: number) => {
         const response = await axiosClient.get(API_ROUTES.ORDER_CURRENT + `/${tableId}`);
         return response.data;
-    }   
+    },
+    updateOrder: async (orderId: number | undefined, items: ItemPedido[]) => {
+        if (!orderId) return;
+        const response = await axiosClient.put(API_ROUTES.ORDER_ID + `/${orderId}`, {items: items});
+        return response.data;
+    }
 }
 
 

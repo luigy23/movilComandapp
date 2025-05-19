@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { View, Text, Pressable, ScrollView } from 'react-native';
 import { useAtom } from 'jotai';
-import { pedidoAtom } from '@/store/pedido';
+import { canastaAtom, limpiarCanasta } from '@/store/pedido';
 import { Ionicons } from '@expo/vector-icons';
 import EditarItemModal from './EditarItemModal';
 import { Link, useRouter } from 'expo-router';
 import { userAtom } from '@/store/auth';
+import { orderService } from '@/services/orderService';
 
 const Canasta = () => {
-  const [pedido, setPedido] = useAtom(pedidoAtom);
+  const [canasta, setCanasta] = useAtom(canastaAtom);
   const [user] = useAtom(userAtom);
   const router = useRouter();
   const [editIndex, setEditIndex] = useState<number | null>(null);
@@ -18,9 +19,9 @@ const Canasta = () => {
 
   // Abrir modal para editar producto
   const editarProducto = (index: number) => {
-    if (!pedido) return;
+    if (!canasta) return;
     setEditIndex(index);
-    const item = pedido.items[index];
+    const item = canasta.items[index];
     setCantidad(item.quantity.toString());
     setNotas(item.notes || '');
     setModalVisible(true);
@@ -28,22 +29,31 @@ const Canasta = () => {
 
   // Guardar cambios de edición
   const handleEditarProducto = () => {
-    if (!pedido || editIndex === null) return;
-    const nuevosItems = pedido.items.map((item, idx) =>
+    if (!canasta || editIndex === null) return;
+    const nuevosItems = canasta.items.map((item, idx) =>
       idx === editIndex
         ? { ...item, quantity: parseInt(cantidad) || 1, notes: notas }
         : item
     );
-    setPedido({ ...pedido, items: nuevosItems });
+    setCanasta({ ...canasta, items: nuevosItems });
     setModalVisible(false);
     setEditIndex(null);
   };
 
   // Eliminar producto
   const eliminarProducto = (index: number) => {
-    if (!pedido) return;
-    const nuevosItems = pedido.items.filter((_, i) => i !== index);
-    setPedido({ ...pedido, items: nuevosItems });
+    if (!canasta) return;
+    const nuevosItems = canasta.items.filter((_, i) => i !== index);
+    setCanasta({ ...canasta, items: nuevosItems });
+  };
+
+  const enviarPedido = async () => {
+    if (!canasta) return;
+
+    const response = await orderService.updateOrder(canasta.tableId, canasta.items);
+    const canastaVacia = limpiarCanasta(canasta);
+    setCanasta(canastaVacia);
+    console.log(response);
   };
 
   return (
@@ -54,19 +64,19 @@ const Canasta = () => {
           className="bg-green-200 px-4 py-2 rounded-lg"
           onPress={() => router.navigate('../Mesas')}
         >
-          <Text className="text-green-900 font-semibold">Mesa: {pedido?.tableId ?? '-'}</Text>
+          <Text className="text-green-900 font-semibold">Mesa: {canasta?.tableId ?? '-'}</Text>
         </Pressable>
         <View className="bg-blue-200 px-4 py-2 rounded-lg">
           <Text className="text-blue-900 font-semibold">
-            Mesero: {user?.name ?? pedido?.waiterId ?? '-'}
+            Mesero: {user?.name ?? canasta?.waiterId ?? '-'}
           </Text>
         </View>
       </View>
       {/* Lista de productos o mensaje vacío */}
-      {pedido?.items && pedido.items.length > 0 ? (
+      {canasta?.items && canasta.items.length > 0 ? (
         <>
           <ScrollView>
-            {pedido.items.map((item, idx) => (
+            {canasta.items.map((item, idx) => (
               <View key={idx} className="bg-white rounded-2xl p-4 mb-4 flex-row items-center">
                 <Text className="text-2xl font-bold mr-2">x{item.quantity}</Text>
                 <View className="flex-1">
@@ -89,7 +99,7 @@ const Canasta = () => {
               </View>
             ))}
           </ScrollView>
-          <Pressable className="bg-green-700 rounded-xl py-3 mt-4 items-center">
+          <Pressable className="bg-green-700 rounded-xl py-3 mt-4 items-center" onPress={enviarPedido}>
             <Text className="text-white text-lg font-semibold">Enviar Pedido</Text>
           </Pressable>
         </>

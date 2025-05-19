@@ -1,6 +1,6 @@
 import { View, Text, Pressable, Alert, Platform } from 'react-native';
 import { useAtom } from 'jotai';
-import { pedidoAtom, inicializarPedido, actualizarMesa } from '@/store/pedido';
+import { pedidoAtom, inicializarPedido, actualizarMesa, canastaAtom } from '@/store/pedido';
 import { userAtom } from '@/store/auth';
 import { orderService } from '@/services/orderService';
 import {  useRouter } from 'expo-router';
@@ -16,22 +16,18 @@ interface ItemMesaProps {
 
 
 
-  // enum TableStatus {
-  //   AVAILABLE     // Disponible
-  //   OCCUPIED      // Ocupada
-  //   BILL_PENDING  // Ocupada, esperando pago
-  //   DISABLED      // Deshabilitada (fuera de servicio)
-  // }
+
 
 export default function ItemMesa({ id, nombre, descripcion, capacidad, categoria, estado }: ItemMesaProps) {
     const [pedido, setPedido] = useAtom(pedidoAtom);
+    const [canasta, setCanasta] = useAtom(canastaAtom);
     const [user] = useAtom(userAtom);
     const router = useRouter();
 
 
     const handlePress = async () => {
-
-            const pedido = {
+         
+            const pedido = { //pedido inicial
                 tableId: id,
                 waiterId: user?.id || 0,
                 items: [],
@@ -40,13 +36,22 @@ export default function ItemMesa({ id, nombre, descripcion, capacidad, categoria
             }
 
             const currentOrder = await orderService.getCurrentOrder(id);
-            if (currentOrder) {     
+            if (currentOrder) {    //si existe un pedido actual, se actualiza
                 setPedido(currentOrder);
             } else {
-                const response = await orderService.createOrder(pedido);
+                const response = await orderService.createOrder(pedido); //si no existe, se crea
                 console.log(response);
                 setPedido(response);
             }
+
+            const canasta = {
+                tableId: id,
+                waiterId: user?.id || 0,
+                items: [],
+                total: 0
+            }
+
+            setCanasta(canasta);
             
            
     
